@@ -11,12 +11,13 @@ Numero INT NOT NULL,
 Rol VARCHAR(15) UNIQUE NOT NULL,
 PRIMARY KEY(Numero));
 
+--DROP TABLE Empleado;
 CREATE TABLE Empleado (
 Cedula CHAR(9) NOT NULL,
 RolN INT,
 Pnombre VARCHAR(15),
 Apellidos VARCHAR(20),
-Usuario VARCHAR(15),
+Usuario VARCHAR(15) UNIQUE,
 Pass VARCHAR(15),
 PRIMARY KEY(Cedula),
 FOREIGN KEY(RolN) REFERENCES Rol(Numero));
@@ -38,7 +39,7 @@ Pasaporte VARCHAR(10) NOT NULL,
 Carne VARCHAR(12) UNIQUE,
 Nombre VARCHAR(50),
 Telefono VARCHAR(12),
-Correo VARCHAR(15),
+Correo VARCHAR(25),
 NTarjeta CHAR(16),
 Pass VARCHAR(15),
 PRIMARY KEY(Pasaporte),
@@ -109,7 +110,10 @@ Pass VARCHAR(15)*/
 		INSERT INTO Estudiante Values
 		(@Carne,
 		(SELECT Numero FROM Universidad WHERE @NombreU = Nombre),
-		0);
+		0)
+		UPDATE Pasajero 
+		SET Carne = @Carne
+		WHERE Pasaporte = @Pasaporte;
 END TRY
 BEGIN CATCH
 	SELECT ERROR_PROCEDURE() AS ErrorProcedimiento, ERROR_MESSAGE() AS TipoError
@@ -156,13 +160,45 @@ AS BEGIN
 	FROM Pasajero AS P;
 END;
 
+--Database triggers
+
+GO
+CREATE TRIGGER EmpleadoNullUsuario
+ON Empleado AFTER INSERT AS
+	DECLARE @Cedula CHAR(9);
+	IF ((SELECT COUNT(i.Cedula)
+		FROM inserted i)>1)
+		RETURN;
+	IF ((SELECT E.Usuario 
+		FROM Empleado E, inserted i 
+		WHERE i.Cedula = E.Cedula ) IS NULL)
+		SELECT @Cedula = E.Cedula
+		FROM Empleado E, inserted i 
+		WHERE i.Cedula = E.Cedula
+		UPDATE Empleado 
+		SET Usuario = @Cedula
+		WHERE Cedula = @Cedula;;
+
+/*GO
+CREATE TRIGGER TriggerPrueba
+ON Empleado AFTER INSERT AS
+	DECLARE @Cedula CHAR(9);
+	SELECT i.Cedula
+	FROM inserted i;*/
+
 GO
 CREATE TRIGGER EmpleadoNullPassword 
 ON Empleado AFTER INSERT AS
 	DECLARE @Cedula CHAR(9);
+	IF ((SELECT COUNT(i.Cedula)
+		FROM inserted i)>1)
+		RETURN;
 	IF ((SELECT E.Pass 
 		FROM Empleado E, inserted i 
-		WHERE @Cedula = i.Cedula AND i.Cedula = E.Cedula ) IS NULL)
+		WHERE i.Cedula = E.Cedula ) IS NULL)
+		SELECT @Cedula = E.Cedula
+		FROM Empleado E, inserted i 
+		WHERE i.Cedula = E.Cedula
 		UPDATE Empleado 
 		SET Pass = 'password'
 		WHERE Cedula = @Cedula;;
@@ -171,6 +207,9 @@ GO
 CREATE TRIGGER PasajeroNullPassword 
 ON Pasajero AFTER INSERT AS
 	DECLARE @Pasaporte VARCHAR(10);
+	IF ((SELECT COUNT(i.Pasaporte)
+		FROM inserted i)>1)
+		RETURN;
 	IF ((SELECT P.Pass
 		FROM Pasajero P, inserted i 
 		WHERE @Pasaporte = i.Pasaporte AND i.Pasaporte = P.Pasaporte) IS NULL)

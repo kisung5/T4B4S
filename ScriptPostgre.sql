@@ -76,15 +76,41 @@ VueloID VARCHAR(15) NOT NULL,
 PRIMARY KEY(VueloID));
 
 --Stored procedures
-GO
+
 CREATE PROCEDURE GetMarcas ()
 LANGUAGE plpgsql
 AS $$
 BEGIN
 	SELECT (Marca, Modelo)
 	FROM MarcaBagcart;
-END;
-$$;
+END; $$;
+
+CREATE PROCEDURE GetBagcarts ()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	SELECT (ID, Marca, Modelo, Capacidad)
+	FROM Bagcart;
+END; $$;
+
+CREATE PROCEDURE GetVuelos ()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	SELECT (ID, Precio)
+	FROM Vuelo;
+END; $$;
+
+CREATE PROCEDURE GetMaletas ()
+LANGUAGE plpgsql
+AS $$
+BEGIN 
+	SELECT (Numero, BagcartID, PasajeroID, Costo, Revisado, Peso)
+	FROM Maleta;
+END; $$;
+
+--CREATE PROCEDURE GetMaleta ()
+
 
 
 
