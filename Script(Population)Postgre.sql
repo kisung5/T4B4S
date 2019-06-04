@@ -1,15 +1,15 @@
 --Database population
-INSERT INTO MarcaBacart (Marca, Modelo, Capacidad) VALUES
+INSERT INTO MarcaBagcart (Marca, Modelo, Capacidad) VALUES
 ('Beltoldi', 2016, 10),
 ('Carttec', 2014, 15),
 ('Handle-it', 2012, 30),
-('Makro Aero' 2018, 20);
+('Makro Aero', 2018, 20);
 
-INSERT INTO Bagcart (ID, Marca, Modelo, Capacidad) VALUES
+INSERT INTO Bagcart (ID, Marca, Modelo) VALUES
 ('10000', 'Beltoldi', 2016),
 ('10001', 'Beltoldi', 2016),
 ('10002', 'Carttec', 2014),
-('10003', 'Handel-it', 2012),
+('10003', 'Handle-it', 2012),
 ('10004', 'Makro Aero', 2018);
 
 INSERT INTO Vuelo (ID, Precio) VALUES
@@ -112,7 +112,7 @@ INSERT INTO Aeropuerto (Codigo, Locacion) VALUES
 INSERT INTO Avion (ID, Modelo, Capacidad) VALUES 
 ('1000', 'Boeing 747', 18),
 ('1001', 'Boeing 747', 18),
-('1002', 'Boeing 777', 25),l
+('1002', 'Boeing 777', 25),
 ('1003', 'Airbus A340', 20),
 ('1004', 'Boeing 767', 30),
 ('1005', 'Boeing 767', 30);

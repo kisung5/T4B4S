@@ -19,7 +19,7 @@ PRIMARY KEY(ID));
 
 CREATE TABLE Aeropuerto (
 Codigo CHAR(3) NOT NULL,
-Locacion TEXT
+Locacion TEXT,
 PRIMARY KEY(Codigo));
 
 CREATE TABLE Maleta (
@@ -41,7 +41,7 @@ FOREIGN KEY(MaletaN) REFERENCES Maleta(Numero));
 
 CREATE TABLE Avion (
 ID VARCHAR(4) NOT NULL,
-Moledo TEXT,
+Modelo TEXT,
 Capacidad INT,
 PRIMARY KEY(ID));
 
