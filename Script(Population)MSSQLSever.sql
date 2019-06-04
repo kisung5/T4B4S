@@ -13,17 +13,21 @@ INSERT INTO EMPLEADO (Cedula, RolN, Pnombre, Apellidos, Usuario, Pass) VALUES
 ('201110444', 4, 'Deiber', 'Granados Vega', '201110444', 'password'),
 ('302220111', 4, 'Luke', 'Highground Skywalker', '302220111', 'password'),
 ('401110222', 4, 'Oscuro', 'Lorcito', '401110222', 'password'),
+('401110221', 4, 'Felix', 'Fernandez Fontana', '401110221', 'password'),
 ('804440222', 2, 'Kisung', 'Lim', '804440222', 'password'),
 ('202220333', 2, 'Michiaki', 'Ogawa', '202220333', 'password'),
 ('301110444', 2, 'Juana', 'de Arco', '301110444', 'password'),
 ('801110444', 2, 'Sun Shin', 'Yi', '801110444', 'password'),
+('801110441', 2, 'Sun Shin', 'Lee', '801110441', 'password'),
 ('502220111', 3, 'Camila', 'Panama Ruiz', '502220111', 'password'),
 ('602220111', 3, 'Rebeca', 'Panama Ruiz', '602220111', 'password'),
 ('702220111', 3, 'Laura', 'Panama Ruiz', '702220111', 'password'),
 ('802220111', 3, 'Yessi', 'Panama Ruiz', '802220111', 'password'),
+('802220112', 3, 'Yessy', 'Ordonez Martinez', '802220112', 'password'),
 ('101110111', 1, 'Marco', 'Hernandez', '101110111', 'password'),
 ('202220222', 1, 'Issac', 'Hernandez', '202220222', 'password'),
 ('303330333', 1, 'Jose', 'Villalobos Mena', '303330333', 'password'),
+('303330334', 1, 'Chocky', 'Choque Checo', '303330334', 'password'),
 ('404440444', 1, 'Manuel', 'Mora Murilo', '404440444', 'password');
 
 INSERT INTO Universidad (Numero, Nombre) VALUES 

@@ -2,30 +2,29 @@
 CREATE TABLE MarcaBagcart (
 Marca VARCHAR(15) NOT NULL,
 Modelo INT NOT NULL,
+Capacidad INT,
 PRIMARY KEY(Marca,Modelo));
 
 CREATE TABLE Bagcart (
-ID VARCHAR(15) NOT NULL,
+ID CHAR(5) NOT NULL,
 Marca VARCHAR(15),
 Modelo INT,
-Capacidad INT,
 PRIMARY KEY(ID),
 FOREIGN KEY(Marca,Modelo) REFERENCES MarcaBagcart(Marca,Modelo));
 
 CREATE TABLE Vuelo (
-ID VARCHAR(15) NOT NULL,
+ID CHAR(5) NOT NULL,
 Precio INT,
 PRIMARY KEY(ID));
 
 CREATE TABLE Aeropuerto (
 Codigo CHAR(3) NOT NULL,
-Pais TEXT,
-Ciudad TEXT,
+Locacion TEXT
 PRIMARY KEY(Codigo));
 
 CREATE TABLE Maleta (
 Numero INT NOT NULL,
-BagcartID VARCHAR(15),
+BagcartID CHAR(5),
 PasajeroID VARCHAR(10) NOT NULL,
 Costo MONEY,
 Revisado BOOLEAN,
@@ -41,14 +40,14 @@ PRIMARY KEY(ID),
 FOREIGN KEY(MaletaN) REFERENCES Maleta(Numero));
 
 CREATE TABLE Avion (
-ID VARCHAR(15) NOT NULL,
+ID VARCHAR(4) NOT NULL,
 Moledo TEXT,
 Capacidad INT,
 PRIMARY KEY(ID));
 
 CREATE TABLE Asignacion (
-AvionID VARCHAR(15) NOT NULL,
-BagcartID VARCHAR(15) NOT NULL,
+AvionID VARCHAR(4) NOT NULL,
+BagcartID VARCHAR(5) NOT NULL,
 Sello CHAR(10) UNIQUE,
 Posicion TEXT,
 PRIMARY KEY(AvionID,BagcartID),
@@ -57,8 +56,8 @@ FOREIGN KEY(BagcartID) REFERENCES Bagcart(ID));
 
 CREATE TABLE Escala (
 Numero INT NOT NULL,
-VueloID VARCHAR(15) NOT NULL,
-AvionID VARCHAR(15),
+VueloID VARCHAR(5) NOT NULL,
+AvionID VARCHAR(4),
 ASalida CHAR(3),
 ALlegada CHAR(3),
 Millas INT,
@@ -72,11 +71,11 @@ FOREIGN KEY(ALlegada) REFERENCES Aeropuerto(Codigo));
 
 CREATE TABLE Viaja (
 PasajeroID VARCHAR(10) NOT NULL UNIQUE,
-VueloID VARCHAR(15) NOT NULL,
-PRIMARY KEY(VueloID));
+VueloID VARCHAR(5) NOT NULL,
+PRIMARY KEY(VueloID, PasajeroID));
 
 --Stored procedures
-
+--Getters
 CREATE PROCEDURE GetMarcas ()
 LANGUAGE plpgsql
 AS $$
@@ -109,7 +108,43 @@ BEGIN
 	FROM Maleta;
 END; $$;
 
---CREATE PROCEDURE GetMaleta ()
+CREATE PROCEDURE GetMaleta (Num INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	SELECT (BagcartID, PasajeroID, Costo, Revisado, Peso)
+	FROM Maleta
+	WHERE Numero = Num;
+END; $$;
+
+CREATE PROCEDURE GetFactura (ThisID VARCHAR(15))
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	SELECT (MaletaN, Archivo)
+	FROM Factura
+	WHERE ThisIS = ID;
+END; $$;
+
+CREATE PROCEDURE GetFactura (TMaletaN INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	SELECT (ID, Archivo)
+	FROM Factura
+	WHERE MaletaN = TMaletaN;
+END; $$;
+
+CREATE PROCEDURE GetAviones ()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	SELECT (ID, Modelo, Capacidad)
+	FROM Avion;
+END; $$;
+
+
+
 
 
 
