@@ -40,14 +40,14 @@ PRIMARY KEY(ID),
 FOREIGN KEY(MaletaN) REFERENCES Maleta(Numero));
 
 CREATE TABLE Avion (
-ID VARCHAR(4) NOT NULL,
+ID CHAR(4) NOT NULL,
 Modelo TEXT,
 Capacidad INT,
 PRIMARY KEY(ID));
 
 CREATE TABLE Asignacion (
-AvionID VARCHAR(4) NOT NULL,
-BagcartID VARCHAR(5) NOT NULL,
+AvionID CHAR(4) NOT NULL,
+BagcartID CHAR(5) NOT NULL,
 Sello CHAR(10) UNIQUE,
 Posicion TEXT,
 PRIMARY KEY(AvionID,BagcartID),
@@ -56,8 +56,8 @@ FOREIGN KEY(BagcartID) REFERENCES Bagcart(ID));
 
 CREATE TABLE Escala (
 Numero INT NOT NULL,
-VueloID VARCHAR(5) NOT NULL,
-AvionID VARCHAR(4),
+VueloID CHAR(5) NOT NULL,
+AvionID CHAR(4),
 ASalida CHAR(3),
 ALlegada CHAR(3),
 Millas INT,
@@ -71,34 +71,41 @@ FOREIGN KEY(ALlegada) REFERENCES Aeropuerto(Codigo));
 
 CREATE TABLE Viaja (
 PasajeroID VARCHAR(10) NOT NULL UNIQUE,
-VueloID VARCHAR(5) NOT NULL,
+VueloID CHAR(5) NOT NULL,
 PRIMARY KEY(VueloID, PasajeroID));
 
 --Stored procedures
 --Getters
-CREATE PROCEDURE GetMarcas ()
-LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION GetMarcas ()
+RETURNS TABLE (Marca VARCHAR, Modelo INT)
 AS $$
 BEGIN
-	SELECT (Marca, Modelo)
-	FROM MarcaBagcart;
-END; $$;
+	RETURN QUERY
+	SELECT m.Marca, m.Modelo
+	FROM MarcaBagcart m;
+END; $$
+LANGUAGE plpgsql;
 
-CREATE PROCEDURE GetBagcarts ()
-LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION GetBagcarts ()
+RETURNS TABLE (ID CHAR, Marca VARCHAR, Modelo INT, Capacidad INT)
 AS $$
 BEGIN
-	SELECT (ID, Marca, Modelo, Capacidad)
-	FROM Bagcart;
-END; $$;
+	RETURN QUERY
+	SELECT b.ID, b.Marca, b.Modelo, m.Capacidad
+	FROM Bagcart b, marcabagcart m
+	WHERE b.marca = m.marca AND b.modelo = m.modelo;
+END; $$ 
+LANGUAGE plpgsql;
 
-CREATE PROCEDURE GetVuelos ()
-LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION GetVuelos ()
+RETURNS TABLE (ID CHAR, Precio INT)
 AS $$
 BEGIN
-	SELECT (ID, Precio)
-	FROM Vuelo;
-END; $$;
+	RETURN QUERY
+	SELECT v.ID, v.Precio
+	FROM Vuelo v;
+END; $$ 
+LANGUAGE plpgsql;
 
 CREATE PROCEDURE GetMaletas ()
 LANGUAGE plpgsql
@@ -108,40 +115,49 @@ BEGIN
 	FROM Maleta;
 END; $$;
 
-CREATE PROCEDURE GetMaleta (Num INT)
-LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION GetMaleta (Num INT)
+RETURNS TABLE
+	(BagcartID CHAR, PasajeroID VARCHAR, Costo MONEY, Revisado BOOLEAN, Peso INT)
 AS $$
 BEGIN
-	SELECT (BagcartID, PasajeroID, Costo, Revisado, Peso)
-	FROM Maleta
-	WHERE Numero = Num;
-END; $$;
+	RETURN QUERY
+	SELECT m.BagcartID, m.PasajeroID, m.Costo, m.Revisado, m.Peso
+	FROM Maleta m
+	WHERE m.Numero = Num;
+END; $$
+LANGUAGE plpgsql;
 
-CREATE PROCEDURE GetFactura (ThisID VARCHAR(15))
-LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION GetFactura (ThisID VARCHAR(15))
+RETURNS TABLE (MaletaN INT, Archivo XML)
 AS $$
 BEGIN
-	SELECT (MaletaN, Archivo)
-	FROM Factura
-	WHERE ThisIS = ID;
-END; $$;
+	RETURN QUERY
+	SELECT f.MaletaN, f.Archivo
+	FROM Factura f
+	WHERE ThisIS = f.ID;
+END; $$
+LANGUAGE plpgsql;
 
-CREATE PROCEDURE GetFactura (TMaletaN INT)
-LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION GetFactura (TMaletaN INT)
+RETURNS TABLE (ID VARCHAR, Archivo XML)
 AS $$
 BEGIN
-	SELECT (ID, Archivo)
-	FROM Factura
-	WHERE MaletaN = TMaletaN;
-END; $$;
+	SELECT f.ID, f.Archivo
+	FROM Factura f
+	WHERE f.MaletaN = TMaletaN;
+END; $$
+LANGUAGE plpgsql;
 
-CREATE PROCEDURE GetAviones ()
-LANGUAGE plpgsql
+--DROP FUNCTION getaviones()
+CREATE OR REPLACE FUNCTION GetAviones ()
+RETURNS TABLE (ID CHAR, Modelo TEXT, Capacidad INT)
 AS $$
 BEGIN
-	SELECT (ID, Modelo, Capacidad)
-	FROM Avion;
-END; $$;
+	RETURN QUERY
+	SELECT a.ID, a.Modelo, a.Capacidad
+	FROM Avion a;
+END; $$
+LANGUAGE plpgsql;
 
 
 
