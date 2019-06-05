@@ -107,13 +107,15 @@ BEGIN
 END; $$ 
 LANGUAGE plpgsql;
 
-CREATE PROCEDURE GetMaletas ()
-LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION GetMaletas ()
+RETURNS TABLE
+	(Numero INT, BagcartID CHAR, PasajeroID VARCHAR, Costo MONEY, Revisado BOOLEAN, Peso INT)
 AS $$
 BEGIN 
-	SELECT (Numero, BagcartID, PasajeroID, Costo, Revisado, Peso)
-	FROM Maleta;
-END; $$;
+	SELECT m.Numero, m.BagcartID, m.PasajeroID, m.Costo, m.Revisado, m.Peso
+	FROM Maleta m;
+END; $$
+LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetMaleta (Num INT)
 RETURNS TABLE
@@ -159,9 +161,35 @@ BEGIN
 END; $$
 LANGUAGE plpgsql;
 
-
-
-
+CREATE OR REPLACE FUNCTION CreateMarca (TMarca VARCHAR(15), TModelo INT, TCapacidad INT)
+RETURNS BOOLEAN
+AS $$
+BEGIN
+	BEGIN
+		INSERT INTO marcabagcart (Marca, Modelo, Capacidad) VALUES
+		(TMarca, TModelo, TCapacidad);
+		RETURN TRUE;
+	EXCEPTION 
+		WHEN check_violation OR unique_violation THEN
+		RETURN FALSE;
+	END;
+END; $$
+LANGUAGE plpgsql;
+		
+CREATE OR REPLACE FUNCTION CreateBagcart (TID CHAR(5), TMarca VARCHAR(15), TModelo INT)
+RETURNS BOOLEAN
+AS $$
+BEGIN
+	BEGIN
+		INSERT INTO bagcart (ID, Marca, Modelo) VALUES
+		(TID, TMarca, TModelo);
+		RETURN TRUE;
+	EXCEPTION 
+		WHEN check_violation OR unique_violation THEN
+		RETURN FALSE;
+	END;
+END; $$
+LANGUAGE plpgsql;
 
 
 
