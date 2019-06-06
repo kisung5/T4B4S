@@ -111,7 +111,8 @@ CREATE OR REPLACE FUNCTION GetMaletas ()
 RETURNS TABLE
 	(Numero INT, BagcartID CHAR, PasajeroID VARCHAR, Costo MONEY, Revisado BOOLEAN, Peso INT)
 AS $$
-BEGIN 
+BEGIN
+	RETURN QUERY
 	SELECT m.Numero, m.BagcartID, m.PasajeroID, m.Costo, m.Revisado, m.Peso
 	FROM Maleta m;
 END; $$
