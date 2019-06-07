@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MensajeHacienda xmlns="https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/mensajeHacienda">
+    <Clave></Clave>
+    <NombreEmisor></NombreEmisor>
+    <TipoIdentificacionEmisor></TipoIdentificacionEmisor>
+    <NumeroCedulaEmisor></NumeroCedulaEmisor>
+    <NombreReceptor></NombreReceptor>
+    <TipoIdentificacionReceptor></TipoIdentificacionReceptor>
+    <NumeroCedulaReceptor></NumeroCedulaReceptor>
+    <Mensaje></Mensaje>
+    <MontoTotalImpuesto></MontoTotalImpuesto>
+    <TotalFactura></TotalFactura>
+</MensajeHacienda>

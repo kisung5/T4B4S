@@ -34,7 +34,7 @@ FOREIGN KEY(BagcartID) REFERENCES Bagcart(ID));
 
 CREATE TABLE Factura (
 MaletaN INT NOT NULL,
-ID VARCHAR(15) NOT NULL,
+ID VARCHAR(10) NOT NULL,
 Archivo XML,
 PRIMARY KEY(ID),
 FOREIGN KEY(MaletaN) REFERENCES Maleta(Numero));
@@ -145,6 +145,7 @@ CREATE OR REPLACE FUNCTION GetFactura (TMaletaN INT)
 RETURNS TABLE (ID VARCHAR, Archivo XML)
 AS $$
 BEGIN
+	RETURN QUERY
 	SELECT f.ID, f.Archivo
 	FROM Factura f
 	WHERE f.MaletaN = TMaletaN;
@@ -192,5 +193,47 @@ BEGIN
 END; $$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION CreateFactura (TMaletaN INT)
+RETURNS XML
+AS $$
+	DECLARE basexml XML;
+BEGIN
+	/*'<Clave></Clave>
+    <NombreEmisor></NombreEmisor>
+    <TipoIdentificacionEmisor></TipoIdentificacionEmisor>
+    <NumeroCedulaEmisor></NumeroCedulaEmisor>
+    <NombreReceptor></NombreReceptor>
+    <TipoIdentificacionReceptor></TipoIdentificacionReceptor>
+    <NumeroCedulaReceptor></NumeroCedulaReceptor>
+    <Mensaje></Mensaje>
+    <MontoTotalImpuesto>0.000</MontoTotalImpuesto>
+    <TotalFactura>50000.000</TotalFactura>';*/
+	basexml := (SELECT XMLCONCAT(
+		'<?xml version="1.0" encoding="UTF-8"?>',
+		XMLELEMENT(name "MensajeHacienda", 
+				   xmlattributes('https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/mensajeHacienda' AS "xmlns"),
+				   XMLFOREST(
+					   '0000' AS "Clave",
+					   'Tec AirLines' AS NombreEmisor,
+						01 AS TipoIdentificacionEmisor,
+						'101000100' AS NumeroCedulaEmisor,
+						'Cliente' AS NombreReceptor,
+						01 AS TipoIdentificacionReceptor,
+						(SELECT m.PasajeroID
+						FROM Maleta m
+						WHERE TMaletaN = m.Numero) AS NumeroCedulaReceptor,
+						1 AS Mensaje,
+						0 AS MontoTotalImpuesto,
+						(SELECT m.Costo
+						FROM Maleta m
+						WHERE TMaletaN = m.Numero) AS TotalFactura)
+				  )));
+	INSERT INTO Factura (MaletaN, ID, Archivo) VALUES
+	(TMaletaN, 
+	 (SELECT COUNT(ID) FROM Factura)::VARCHAR(15), 
+	 basexml);
+	RETURN basexml;
+END; $$
+LANGUAGE plpgsql;
 
 
